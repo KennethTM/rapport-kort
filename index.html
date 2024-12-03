@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map with GeoJSON Clusters</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        
+        /* New styles for the title overlay */
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            text-align: center;
+            font-family: Helvetica, Arial, sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .map-overlay h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        .map-overlay p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-overlay">
+        <h1>'Rapport-kort'</h1>
+        <p>Steder og lokaliteter fra <a href="https://dce.au.dk/udgivelser" target="_blank" style="color: inherit;">rapporter fra DCE</a><br> (Nationalt Center for Miljø og Energi, Aarhus Universitet)<br>vist på et kort.<br><b>Klik for at se område og rapporter.</b></p>
+        <p>Baseret på 'named-entity-recognition' og geocoding (<a href="https://nominatim.org/" target="_blank" style="color: inherit;">Nominatim</a>)</p>
+        <i><p>Udviklet af <a href="https://github.com/KennethTM" target="_blank" style="color: inherit;">Kenneth Thorø Martinsen</a></i>
+    </div>
+<div id="map"></div>
+<script>
+    var map = L.map('map').setView([56, 11], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var markerClusterGroup = L.markerClusterGroup();
+    var boundingBox; 
+
+    L.geoJSON.ajax("dce_reports.geojson", {
+        onEachFeature: function(feature, layer) {
+            var popupContent = '<strong>' + feature.properties.name + '</strong><br>';
+            feature.properties.url.forEach(function(url) {
+                const extractedString = url.match(/\/([^\/]+)\.pdf$/)[1];
+                popupContent += '<a href="' + url + '" target="_blank">' + extractedString + '</a><br>';
+            });
+
+            layer.bindPopup(popupContent);
+
+            layer.on('click', function(e) {
+                if (boundingBox) {
+                    map.removeLayer(boundingBox);
+                }
+                var bounds = L.latLngBounds(
+                    [feature.properties.bbox[0], feature.properties.bbox[2]],
+                    [feature.properties.bbox[1], feature.properties.bbox[3]]
+                );
+                boundingBox = L.rectangle(bounds, {color: "#ff7800", weight: 1}).addTo(map);
+            });
+
+            markerClusterGroup.addLayer(layer);
+        }
+    });
+
+    map.addLayer(markerClusterGroup);
+</script>
+</body>
+</html>
