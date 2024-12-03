@@ -4,4 +4,4 @@
 <p>Baseret på 'named-entity-recognition' og geocoding (<a href="https://nominatim.org/" target="_blank" style="color: inherit;">Nominatim</a>)</p>
 <i><p>Udviklet af <a href="https://github.com/KennethTM" target="_blank" style="color: inherit;">Kenneth Thorø Martinsen</a></i>
 
-Link til side: [[Duck Duck Go](https://kennethtm.github.io/rapport-kort/)]([https://duckduckgo.com](https://kennethtm.github.io/rapport-kort/)).
+Link til side: [https://kennethtm.github.io/rapport-kort/](https://kennethtm.github.io/rapport-kort/)]
