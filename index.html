@@ -35,21 +35,57 @@
             margin: 0;
             font-size: 24px;
             color: #333;
+            flex: 1;  /* Take up remaining space */
+            text-align: center;  /* Center the text */
         }
         .map-overlay p {
             margin: 5px 0 0 0;
             font-size: 14px;
             color: #666;
         }
+        .map-overlay {
+            cursor: pointer;
+        }
+
+        .overlay-header {
+            display: flex;
+            justify-content: center;  /* Center horizontally */
+            align-items: center;
+            position: relative;  /* For absolute positioning of toggle button */
+        }
+
+        .toggle-button {
+            position: absolute;  /* Position relative to overlay-header */
+            right: 0;           /* Align to right */
+            transition: transform 0.3s;
+        }
+
+        .overlay-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .overlay-content.collapsed {
+            max-height: 0;
+        }
+
+        .toggle-button.collapsed {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 <body>
-    <div class="map-overlay">
+<div class="map-overlay">
+    <div class="overlay-header" onclick="toggleOverlay()">
         <h1>'Rapport-kort'</h1>
-        <p>Steder og lokaliteter fra <a href="https://dce.au.dk/udgivelser" target="_blank" style="color: inherit;">rapporter fra DCE</a><br> (Nationalt Center for Miljø og Energi, Aarhus Universitet)<br>vist på et kort.<br><b>Klik for at se område og rapporter.</b></p>
-        <p>Baseret på 'named-entity-recognition' og geocoding (<a href="https://nominatim.org/" target="_blank" style="color: inherit;">Nominatim</a>)</p>
-        <i><p>Udviklet af <a href="https://github.com/KennethTM" target="_blank" style="color: inherit;">Kenneth Thorø Martinsen</a></i>
+        <span class="toggle-button">▼</span>
     </div>
+    <div class="overlay-content">
+        <p>Steder og lokaliteter fra <a href="https://dce.au.dk/udgivelser" target="_blank" style="color: inherit;">DCE rapporter</a><br> (Nationalt Center for Miljø og Energi,<br>Aarhus Universitet)</p>
+        <i><p>Udviklet af <a href="https://github.com/KennethTM" target="_blank" style="color: inherit;">Kenneth Thorø Martinsen<br>(kenneth2810@gmail.com)</a></i>
+    </div>
+</div>
 <div id="map"></div>
 <script>
     var map = L.map('map').setView([56, 11], 7);
@@ -87,6 +123,14 @@
     });
 
     map.addLayer(markerClusterGroup);
+</script>
+<script>
+    function toggleOverlay() {
+        const content = document.querySelector('.overlay-content');
+        const button = document.querySelector('.toggle-button');
+        content.classList.toggle('collapsed');
+        button.classList.toggle('collapsed');
+    }
 </script>
 </body>
 </html>
